@@ -1,3 +1,4 @@
+from sboxes import SBOXES
 
 
 def string_to_binary(input_string):
@@ -44,6 +45,44 @@ SHIFTS = [
     1, 1, 2, 2, 2, 2, 2, 2,
     1, 2, 2, 2, 2, 2, 2, 1
 ]
+E = [
+    32, 1, 2, 3, 4, 5,
+    4, 5, 6, 7, 8, 9,
+    8, 9, 10, 11, 12, 13,
+    12, 13, 14, 15, 16, 17,
+    16, 17, 18, 19, 20, 21,
+    20, 21, 22, 23, 24, 25,
+    24, 25, 26, 27, 28, 29,
+    28, 29, 30, 31, 32, 1
+]
+P = [
+    16, 7, 20, 21,
+    29, 12, 28, 17,
+    1, 15, 23, 26,
+    5, 18, 31, 10,
+    2, 8, 24, 14,
+    32, 27, 3, 9,
+    19, 13, 30, 6,
+    22, 11, 4, 25
+]
+def xor(a, b):
+    return ''.join(['0' if bit_a == bit_b else '1' for bit_a, bit_b in zip(a, b)])
+def sbox_substitution(xor_output):
+    output = ''
+    for i in range(8):
+        block = xor_output[i*6:(i+1)*6]
+        row = int(block[0] + block[5], 2)
+        col = int(block[1:5], 2)
+        val = SBOXES[i][row][col]
+        output += format(val, '04b')
+    return output
+def f_function(R,K):
+        expanded_R = permute(R, E)
+        xor_result = xor(expanded_R, K)
+        sbox_output = sbox_substitution(xor_result)
+        return permute(sbox_output, P)
+
+
 
 def permute(original, table):
     return ''.join([original[i - 1] for i in table])
@@ -94,7 +133,22 @@ if __name__ == "__main__":
     for i, rk in enumerate(round_keys, 1):
         print(f"Round {i}: {rk}")
 
+    L=L0
+    R=R0
 
+    for i in range(16):
+          f_res = f_function(R, round_keys[i])
+          new_L = R
+          new_R = xor(L, f_res)
+          L, R = new_L, new_R 
+          print(f"Round {i+1}:")
+          print("L",new_L)
+          print("R",new_R)
+
+ 
+
+
+      
 
 
         

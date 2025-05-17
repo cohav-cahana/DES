@@ -1,3 +1,5 @@
+
+
 def string_to_binary(input_string):
     return ''.join([format(ord(char), '08b') for char in input_string])
 
@@ -16,8 +18,10 @@ IP = [
     63, 55, 47, 39, 31, 23, 15, 7
 ]
 
+
 def initial_permutation(binary_input):
     return ''.join([binary_input[i - 1] for i in IP])
+
 
 if __name__ == "__main__":
     plaintext = "thoughts"
@@ -32,7 +36,10 @@ if __name__ == "__main__":
  
     permuted_plaintext = initial_permutation(binary_plaintext)
     print("After Initial Permutation:", permuted_plaintext)
-
+    L0 = permuted_plaintext[:32]
+    R0 = permuted_plaintext[32:]
+    print("L0:", L0)
+    print("R0:", R0)
 
 
 

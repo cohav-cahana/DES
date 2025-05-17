@@ -121,45 +121,52 @@ def generate_keys(key_64bit):
 
     return round_keys
 
+
+def encrypt(plaintext, key):
+    binary_plaintext = string_to_binary(plaintext)
+    binary_key = string_to_binary(key)
+
+    permuted_plaintext = initial_permutation(binary_plaintext)
+    L, R = permuted_plaintext[:32], permuted_plaintext[32:]
+
+    round_keys = generate_keys(binary_key)
+
+    for i in range(16):
+        f_res = f_function(R, round_keys[i])
+        L, R = R, xor(L, f_res)
+
+    pre_output = R + L
+    cipher_binary = permute(pre_output, FP)
+    return binary_to_string(cipher_binary)
+
+def decrypt(ciphertext, key):
+    binary_cipher = string_to_binary(ciphertext)
+    binary_key = string_to_binary(key)
+
+    permuted_cipher = initial_permutation(binary_cipher)
+    L, R = permuted_cipher[:32], permuted_cipher[32:]
+
+    round_keys = generate_keys(binary_key)[::-1]  # reverse!
+
+    for i in range(16):
+        f_res = f_function(R, round_keys[i])
+        L, R = R, xor(L, f_res)
+
+    pre_output = R + L
+    decrypted_binary = permute(pre_output, FP)
+    return binary_to_string(decrypted_binary)
+
+
+
 if __name__ == "__main__":
     plaintext = "thoughts"
     key = "nonsense"
 
-    binary_plaintext = string_to_binary(plaintext)
-    binary_key = string_to_binary(key)
+    encrypted = encrypt(plaintext, key)
+    print("Encrypted text:", encrypted)
 
-    print("Plaintext:", binary_plaintext)
-    print("Key:", binary_key)
-
- 
-    permuted_plaintext = initial_permutation(binary_plaintext)
-    print("After Initial Permutation:", permuted_plaintext)
-    L0 = permuted_plaintext[:32]
-    R0 = permuted_plaintext[32:]
-    print("L0:", L0)
-    print("R0:", R0)
-
-    round_keys = generate_keys(binary_key)
-    print("Round keys:")
-    for i, rk in enumerate(round_keys, 1):
-        print(f"Round {i}: {rk}")
-
-    L=L0
-    R=R0
-
-    for i in range(16):
-          f_res = f_function(R, round_keys[i])
-          new_L = R
-          new_R = xor(L, f_res)
-          L, R = new_L, new_R 
-          print(f"Round {i+1}:")
-          print("L",new_L)
-          print("R",new_R)
-
-    pre_output = R + L
-    ciphertext = permute(pre_output, FP)
-    print("\nCiphertext (binary):", ciphertext)
-    print("Ciphertext (text):", binary_to_string(ciphertext))
+    decrypted = decrypt(encrypted, key)
+    print("Decrypted text:", decrypted)
 
 
 

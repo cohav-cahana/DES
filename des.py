@@ -65,6 +65,17 @@ P = [
     19, 13, 30, 6,
     22, 11, 4, 25
 ]
+FP = [
+    40, 8, 48, 16, 56, 24, 64, 32,
+    39, 7, 47, 15, 55, 23, 63, 31,
+    38, 6, 46, 14, 54, 22, 62, 30,
+    37, 5, 45, 13, 53, 21, 61, 29,
+    36, 4, 44, 12, 52, 20, 60, 28,
+    35, 3, 43, 11, 51, 19, 59, 27,
+    34, 2, 42, 10, 50, 18, 58, 26,
+    33, 1, 41, 9,  49, 17, 57, 25
+]
+
 def xor(a, b):
     return ''.join(['0' if bit_a == bit_b else '1' for bit_a, bit_b in zip(a, b)])
 def sbox_substitution(xor_output):
@@ -144,6 +155,14 @@ if __name__ == "__main__":
           print(f"Round {i+1}:")
           print("L",new_L)
           print("R",new_R)
+
+    pre_output = R + L
+    ciphertext = permute(pre_output, FP)
+    print("\nCiphertext (binary):", ciphertext)
+    print("Ciphertext (text):", binary_to_string(ciphertext))
+
+
+
 
  
 

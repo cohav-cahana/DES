@@ -168,6 +168,9 @@ if __name__ == "__main__":
     decrypted = decrypt(encrypted, key)
     print("Decrypted text:", decrypted)
 
+    assert decrypted == plaintext, "Decryption failed!"
+
+
 
 
 
